@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    CSV Manager - List All Files
+{% endblock %}
+
+{% block content %}
+    <h1 class="text-center text-success">LIST ALL FILES</h1>
+    {% for each_file in files %}
+        <div class="container my-3 shadow rounded p-2 justify-content-between">
+            <p>
+                {{ each_file.file_description }}
+            </p>
+            <div class="container-fluid row">
+                <p class="col-md-6">
+                    {{ each_file.get_file_size }}
+                </p>
+                <div class="col-md-6 d-flex justify-content-end">
+                    <a class="btn btn-primary m-1" href={% url 'accounts:update_file' id=each_file.id %}>Update</a>
+                    <a class="btn btn-danger m-1" href={% url 'accounts:delete_file' id=each_file.id %}>Delete File</a>
+                    <a class="btn btn-warning m-1" href={% url 'accounts:detail_file' id=each_file.id %}>View File</a>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+{% endblock %}

@@ -55,7 +55,7 @@ class LogoutView(View):
         logout(request)
         messages.add_message(request, messages.SUCCESS,
                              'Successfully logged out, Please login to continue!')
-        return HttpResponseRedirect(reverse('login'))
+        return HttpResponseRedirect(reverse('accounts:login'))
 
 
 class DetailUserView(LoginRequiredMixin, DetailView):

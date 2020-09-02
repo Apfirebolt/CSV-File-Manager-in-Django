@@ -9,16 +9,13 @@ class CSVFileUploadForm(forms.ModelForm):
     }
     uploaded_file = forms.FileField(label=("Please Upload Your CSV File."),
                                     widget=forms.FileInput(attrs={'class': 'form-control-file'}),
-                                    validators=[FileExtensionValidator(['.csv', ])])
+                                    validators=[FileExtensionValidator(['csv', ])])
     file_description = forms.CharField(label=("Please Enter File Description"),
                                 widget=forms.Textarea(attrs={'class': 'form-control'}),)
 
     class Meta:
         model = UploadedFile
-        fields = ('uploaded_file', 'file_description', 'profile_image',)
-
-    def clean_uploaded_file(self):
-        pass
+        fields = ('uploaded_file', 'file_description',)
 
 
 
