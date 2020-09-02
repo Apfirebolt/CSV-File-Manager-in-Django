@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,10 +8,18 @@
 
         {% endblock %}
     </title>
+    <link rel="stylesheet" href={% static 'css/font-awesome.min.css' %}>
+    <link rel="stylesheet" href={% static 'css/bootstrap.css' %}>
+    <link rel="stylesheet" href={% static 'css/mainStyles.css' %}>
 </head>
 <body>
+{% include 'partials/header.html' %}
 {% block content %}
 
 {% endblock %}
+{% include 'partials/footer.html' %}
+<script src={% static 'js/jquery.js' %}></script>
+<script src={% static 'js/bootstrap.min.js' %}></script>
+<script src={% static 'js/mainJS.js' %}></script>
 </body>
 </html>

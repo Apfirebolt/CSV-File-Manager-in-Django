@@ -125,7 +125,7 @@ DEFAULT_RENDERER_CLASSES = [
     'rest_framework.renderers.BrowsableAPIRenderer',
 ]
 
-AUTH_USER_MODEL = "users.CustomUser"
+AUTH_USER_MODEL = "accounts.CustomUser"
 
 LANGUAGE_CODE = 'en-us'
 
