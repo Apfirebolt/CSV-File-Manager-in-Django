@@ -10,7 +10,16 @@
             <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}" role="alert">{{ message }}</div>
         {% endfor %}
     {% endif %}
-    <h1 class="text-center text-success">LIST ALL FILES</h1>
+    <h3 class="text-center my-3 text-black-50">LIST ALL FILES</h3>
+    <form method="get" class="search_container container bg-white text-black-50 p-2">
+        <p>You can search file by file description.</p>
+        <div class="input-group d-flex align-items-center my-3">
+            <label for="file_description_text mx-2">Search Here</label>
+            <input type="text" class="form-control m-2" name="file_description_text" id="file_description_text">
+            <input type="submit" class="btn btn-success m-2" value="Search">
+        </div>
+    </form>
+
     {% for each_file in files %}
         <div class="container my-3 shadow rounded p-2 justify-content-between">
             <p>

@@ -7,9 +7,8 @@ from rest_framework import status
 from . serializers import ViewDocumentSerializer
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.contrib import messages
-from django.http import HttpResponseRedirect, HttpResponse
+from django.http import HttpResponseRedirect
 from django.shortcuts import reverse
-import pandas as pd
 import csv
 
 
@@ -33,13 +32,18 @@ class UploadNewFile(LoginRequiredMixin, FormView):
         return super(UploadNewFile, self).form_invalid(form)
 
 
-class ListUploadedFiles(ListView):
+class ListUploadedFiles(LoginRequiredMixin, ListView):
     """ This class view would list all the csv files the user has uploaded """
     template_name = 'documents/list_files.html'
     context_object_name = 'files'
 
     def get_queryset(self):
-        return UploadedFile.objects.all()
+        try:
+            filter_text = self.request.GET['file_description_text']
+            return UploadedFile.objects.filter(file_description__icontains=filter_text)
+        except:
+            # Simply return all objects when no query params are found and exception is raised
+            return UploadedFile.objects.all()
 
 
 class UpdateUploadedFile(PermissionRequiredMixin, LoginRequiredMixin, UpdateView):
@@ -63,7 +67,7 @@ class UpdateUploadedFile(PermissionRequiredMixin, LoginRequiredMixin, UpdateView
         return reverse('accounts:all_files')
 
 
-class DetailUploadedFile(DetailView):
+class DetailUploadedFile(PermissionRequiredMixin, LoginRequiredMixin, DetailView):
     """ This view would render uploaded file details in bar chart form """
 
     queryset = UploadedFile.objects.all()
@@ -72,6 +76,10 @@ class DetailUploadedFile(DetailView):
 
     def get_object(self, queryset=None):
         return UploadedFile.objects.get(id=self.kwargs['id'])
+
+    def has_permission(self):
+        current_obj = self.get_object()
+        return self.request.user == current_obj.uploaded_by
 
     def get_context_data(self, **kwargs):
         context = super(DetailUploadedFile, self).get_context_data(**kwargs)
@@ -141,9 +149,9 @@ class GetDocumentDetail(APIView):
             document_data = ViewDocumentSerializer(document).data
             return Response({'message': 'Document fetched', 'data': document_data,
                              'csv_data': {
-                                 'date_data': date_data[1:50],
-                                 'page_data': page_data[1:50],
-                                 'session_data': session_data[1:50]
+                                 'date_data': date_data[1:],
+                                 'page_data': page_data[1:],
+                                 'session_data': session_data[1:]
                              }}, status=status.HTTP_200_OK)
         except Exception as err:
             print(err)

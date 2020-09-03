@@ -40,3 +40,18 @@ input[type="color"]:focus,
   padding: 0.5rem;
   margin: 0.5rem;
 }
+
+.pagination {
+    flex-wrap: wrap !important;
+}
+
+#all_data_container {
+    display: none;
+}
+
+.page-link {
+    cursor: pointer !important;
+    background-color: indianred;
+    color: #FFF !important;
+    font-weight: 500;
+}
