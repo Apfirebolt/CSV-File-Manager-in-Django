@@ -26,13 +26,6 @@ class CSVFileUploadForm(forms.ModelForm):
     def clean_uploaded_file(self):
         uploaded_file = self.cleaned_data.get('uploaded_file')
         df = pd.read_csv(uploaded_file.file)
-        # Check if sessions is greater than pages in any entry
-        new_df = df[df['page_views'] < df['sessions']]
-        if not new_df.empty:
-            raise forms.ValidationError(
-                self.error_messages['session_more_than_page'],
-                code='session_more_than_page'
-            )
         # Check uniqueness of the id column
         if not df['id'].is_unique:
             raise forms.ValidationError(
@@ -50,6 +43,13 @@ class CSVFileUploadForm(forms.ModelForm):
             raise forms.ValidationError(
                 self.error_messages['page_not_numeric'],
                 code='page_not_numeric'
+            )
+        # Check if sessions is greater than pages in any entry
+        new_df = df[df['page_views'] < df['sessions']]
+        if not new_df.empty:
+            raise forms.ValidationError(
+                self.error_messages['session_more_than_page'],
+                code='session_more_than_page'
             )
         return uploaded_file
 

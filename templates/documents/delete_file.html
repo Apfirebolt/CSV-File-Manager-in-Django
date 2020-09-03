@@ -5,7 +5,7 @@
 {% endblock %}
 
 {% block content %}
-    <form class="container" action="" method="post" enctype="multipart/form-data">
+    <form class="container my-3" action="" method="post" enctype="multipart/form-data">
     <h3 class="my-3 text-center black-text">DELETE FILE</h3>
     {% csrf_token %}
         <h5 class="text-danger">Are you sure you want to delete the file with description " {{ file_object.file_description }} " ?</h5>

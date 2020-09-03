@@ -108,16 +108,16 @@ function call_api(start_index, end_index, total_pages) {
             let append_data = '';
             // Next and previous tabs in pagination would be included if total number of pages exceed 3.
             if(total_pages > 3) {
-                append_data += '<li class="page-item"><a class="page-link m-1" value="previous">Previous</a></li>';
+                append_data += '<li class="page-item"><a class="page-link m-1" href="#" value="previous">Previous</a></li>';
             }
             for(let i=1; i<=total_pages; i+=1) {
-                append_data += `<li class="page-item"><a class="page-link m-1" value=${i}>${i}</a></li>`
+                append_data += `<li class="page-item"><a class="page-link m-1" href="#" value=${i}>${i}</a></li>`
             }
             if(total_pages > 3) {
-                append_data += '<li class="page-item"><a class="page-link m-1" value="next">Next</a></li>';
+                append_data += '<li class="page-item"><a class="page-link m-1" href="#" value="next">Next</a></li>';
             }
             $('.pagination').append(append_data);
-            $('.card-body').empty();
+            $('.card-body')
             $('.card-body').append(`<p class="text-primary">Data from indices 
 ${start_index} to ${end_index} is currently plotted in the charts, you can use pagination for navigation.</p>`)
             // Initialize radar chart
