@@ -6,12 +6,13 @@ import re
 
 class CustomUserForm(forms.ModelForm):
     error_messages = {
-        'password_mismatch': ("The two password fields didn't match."),
-        'username_required': ("User name is a required field."),
+        'password_mismatch': "The two password fields didn't match.",
+        'username_required': "User name is a required field.",
         'username_rules': "User name must not contain any special character aside from space.",
         'valid_images': "Image uploaded is not in valid form, must be in png or jpg format!",
         'password_length': "Your password is not secure enough, must be at least 8 characters long.",
-        'password_security': "Your password must contain at least 1 number and a capital letter."
+        'password_security': "Your password must contain at least 1 number and a capital letter.",
+        'file_size_exceeded': "File size exceeded, please upload an image whose size is less than 1 MB."
     }
     password1 = forms.CharField(label=("Please Enter Your Password"),
                                 widget=forms.PasswordInput(attrs={'class': 'form-control'}))
@@ -76,6 +77,15 @@ class CustomUserForm(forms.ModelForm):
             )
 
         return password
+
+    def clean_profile_image(self):
+        profile_image = self.cleaned_data.get('profile_image')
+        if profile_image.size > 1048576:
+            raise forms.ValidationError(
+                self.error_messages['file_size_exceeded'],
+                code='file_size_exceeded'
+            )
+        return profile_image
 
     def save(self, commit=True):
         user = super(CustomUserForm, self).save(commit=False)
