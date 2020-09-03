@@ -65,20 +65,20 @@ This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md
 
 * Files Page which shows list of files with their sizes, here you can perform CRUD operations on files.
 
-![alt text](./screenshots/list_files.png)
+![alt text](./screenshots/list_files.PNG)
 
 * First image of the charts page where charts are implemented using Jquery, AJAX and charts JS library. Pagination
 has been implemented using Bootstrap and Jquery.
 
-![alt text](./screenshots/charts_1.png)
+![alt text](./screenshots/charts_1.PNG)
 
 * Another screenshot of the charts page. This one shows Radar chart.
 
-![alt text](./screenshots/charts_2.png)
+![alt text](./screenshots/charts_2.PNG)
 
 * One more charts page screenshot, you can also view all the data inside the CSV in container on the webpage.
 
-![alt text](./screenshots/charts_3.png)
+![alt text](./screenshots/charts_3.PNG)
 
 * Upload File page, here you can only upload CSV files. There are other custom checks applied. One of these applied
 checks is shown in the screenshot below. Deep inspection of CSV data is performed before upload using Pandas library.
