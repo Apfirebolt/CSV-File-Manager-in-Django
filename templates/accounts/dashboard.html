@@ -10,5 +10,16 @@
             <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}" role="alert">{{ message }}</div>
         {% endfor %}
     {% endif %}
-    <h1 class="text-center text-success">DASHBOARD</h1>
+    <h3 class="text-center my-3 text-black-50">DASHBOARD</h3>
+
+    <div class="container mx-auto row p-3 my-3 d-flex justify-content-between bg-white shadow">
+      <img alt="Profile Image for this user not available" height="300" width="400"
+           class="card-img-top img-rounded col-md-4" src={{ request.user.profile_image.url }} >
+      <p class="col-md-6 offset-2">
+          Lorem ipsum dolor sit amet, consectetur adipisicing elit. Amet aperiam architecto aspernatur
+          autem beatae consectetur consequatur culpa debitis, dolor dolores doloribus enim eos facere fugiat,
+          in inventore ipsa ipsam iste iure modi neque nisi odio odit omnis pariatur porro provident
+          quas quibusdam reiciendis reprehenderit tempore unde ut vitae voluptas voluptatem?
+      </p>
+    </div>
 {% endblock %}

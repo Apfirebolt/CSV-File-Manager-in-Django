@@ -24,7 +24,7 @@ class CreateUserView(FormView):
         userObj.admin = False
         userObj.save()
         messages.add_message(self.request, messages.INFO, 'You have successfully registered, Please login to continue!')
-        return HttpResponseRedirect(reverse('login'))
+        return HttpResponseRedirect(reverse('accounts:login'))
 
     def form_invalid(self, form):
         # If form is invalid return superclass method

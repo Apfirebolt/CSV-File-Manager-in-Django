@@ -40,10 +40,10 @@ class ListUploadedFiles(LoginRequiredMixin, ListView):
     def get_queryset(self):
         try:
             filter_text = self.request.GET['file_description_text']
-            return UploadedFile.objects.filter(file_description__icontains=filter_text)
+            return UploadedFile.objects.filter(uploaded_by=self.request.user, file_description__icontains=filter_text)
         except:
             # Simply return all objects when no query params are found and exception is raised
-            return UploadedFile.objects.all()
+            return UploadedFile.objects.filter(uploaded_by=self.request.user)
 
 
 class UpdateUploadedFile(PermissionRequiredMixin, LoginRequiredMixin, UpdateView):
