@@ -95,7 +95,7 @@ function line_chart(res, start_index, end_index) {
 function call_api(start_index, end_index, total_pages) {
     let document_id = location.pathname.split('/')[3];
     $.ajax({
-        url: "http://83.136.219.54:8010/accounts/api" + document_id,
+        url: "http://83.136.219.54:8010/accounts/api/" + document_id,
         type: 'GET',
         dataType: 'json',
         success: function(res) {
