@@ -83,5 +83,5 @@ has been implemented using Bootstrap and Jquery.
 * Upload File page, here you can only upload CSV files. There are other custom checks applied. One of these applied
 checks is shown in the screenshot below. Deep inspection of CSV data is performed before upload using Pandas library.
 
-![alt text](./screenshots/validation_check.png)
+![alt text](./screenshots/validation_check.PNG)
 

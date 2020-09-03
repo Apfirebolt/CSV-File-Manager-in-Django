@@ -13,8 +13,13 @@
     <h3 class="text-center my-3 text-black-50">DASHBOARD</h3>
 
     <div class="container mx-auto row p-3 my-3 d-flex justify-content-between bg-white shadow">
-      <img alt="Profile Image for this user not available" height="300" width="400"
+      {% if request.user.profile_image %}
+          <img alt="Profile Image for this user not available" height="300" width="400"
            class="card-img-top img-rounded col-md-4" src={{ request.user.profile_image.url }} >
+      {% else %}
+          <h4 class="text-center text-black">You haven't uploaded any profile image yet.</h4>
+      {% endif %}
+
       <p class="col-md-6 offset-2">
           Lorem ipsum dolor sit amet, consectetur adipisicing elit. Amet aperiam architecto aspernatur
           autem beatae consectetur consequatur culpa debitis, dolor dolores doloribus enim eos facere fugiat,
