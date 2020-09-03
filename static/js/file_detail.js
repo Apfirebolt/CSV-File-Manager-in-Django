@@ -1,5 +1,3 @@
-// Code for charts
-
 // Date Formatter
 function formatDate(date) {
     let d = new Date(date),
