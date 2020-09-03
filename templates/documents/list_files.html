@@ -5,6 +5,11 @@
 {% endblock %}
 
 {% block content %}
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}" role="alert">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
     <h1 class="text-center text-success">LIST ALL FILES</h1>
     {% for each_file in files %}
         <div class="container my-3 shadow rounded p-2 justify-content-between">

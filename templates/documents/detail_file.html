@@ -1,9 +1,38 @@
 {% extends 'base.html' %}
-
+{% load static %}
 {% block title %}
     CSV Manager - File Details
 {% endblock %}
 
 {% block content %}
     <h1 class="text-center text-success">FILE DETAIL - CHART VIEW</h1>
+    <h4 class="text-center my-3 text-primary">LINE CHART</h4>
+    <canvas id="lineChart" class="container-fluid my-3 mx-auto"></canvas>
+    <h4 class="text-center my-3 text-primary">RADAR CHART</h4>
+    <canvas id="radarChart" class="container-fluid my-3 mx-auto"></canvas>
+    <div class="container my-3">
+    <h4 class="text-center my-3 text-primary">CSV DATA TABLE</h4>
+        <table class="table">
+          <thead>
+            <tr>
+              {% for each_header in csv_headers %}
+                  <th scope="col">{{ each_header }}</th>
+              {% endfor %}
+            </tr>
+          </thead>
+          <tbody>
+            {% for row in file_data %}
+                <tr>
+                    <td>{{ row.0 }}</td>
+                    <td>{{ row.1 }}</td>
+                    <td>{{ row.2 }}</td>
+                    <td>{{ row.3 }}</td>
+                </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+    </div>
+    <script src={% static 'js/jquery.js' %}></script>
+    <script src={% static 'js/charts.js' %}></script>
+    <script src={% static 'js/file_detail.js' %}></script>
 {% endblock %}

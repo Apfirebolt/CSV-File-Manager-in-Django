@@ -1,10 +1,16 @@
 from django.views.generic import FormView, ListView, UpdateView, DeleteView, DetailView
 from . forms import CSVFileUploadForm
 from . models import UploadedFile
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from . serializers import ViewDocumentSerializer
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.contrib import messages
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import reverse
+import pandas as pd
+import csv
 
 
 class UploadNewFile(LoginRequiredMixin, FormView):
@@ -67,6 +73,22 @@ class DetailUploadedFile(DetailView):
     def get_object(self, queryset=None):
         return UploadedFile.objects.get(id=self.kwargs['id'])
 
+    def get_context_data(self, **kwargs):
+        context = super(DetailUploadedFile, self).get_context_data(**kwargs)
+        uploaded_file_obj = self.get_object()
+        uploaded_csv_file = uploaded_file_obj.uploaded_file
+        file_data = []
+        try:
+            with open(uploaded_csv_file.path, 'r', encoding='utf-8') as file:
+                reader = csv.reader(file)
+                for row in reader:
+                    file_data.append(row)
+                context['csv_headers'] = [item.upper() for item in file_data[0]]
+                context['file_data'] = file_data[1:]
+        except Exception as err:
+            print(err)
+        return context
+
 
 class DeleteUploadedFile(PermissionRequiredMixin, LoginRequiredMixin, DeleteView):
     """ This class view would delete an uploaded file """
@@ -75,6 +97,7 @@ class DeleteUploadedFile(PermissionRequiredMixin, LoginRequiredMixin, DeleteView
     context_object_name = 'file_object'
 
     def get_success_url(self):
+        messages.add_message(self.request, messages.SUCCESS, 'Successfully deleted the file!')
         return reverse('accounts:all_files')
 
     def get_object(self, queryset=None):
@@ -83,3 +106,45 @@ class DeleteUploadedFile(PermissionRequiredMixin, LoginRequiredMixin, DeleteView
     def has_permission(self):
         current_obj = self.get_object()
         return self.request.user == current_obj.uploaded_by
+
+
+class GetAllDocumentsAPI(APIView):
+    permission_classes = []
+
+    def get(self, request):
+        try:
+            all_user_documents = UploadedFile.objects.all()
+            document_data = ViewDocumentSerializer(all_user_documents, many=True).data
+            return Response({'message': 'All documents fetched', 'data': document_data}, status=status.HTTP_200_OK)
+        except Exception as err:
+            print(err)
+            return Response({'message': 'Failed to fetch user documents'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class GetDocumentDetail(APIView):
+    permission_classes = []
+
+    def get(self, request, pk):
+        try:
+            session_data = []
+            page_data = []
+            date_data = []
+            document = UploadedFile.objects.get(id=pk)
+            uploaded_csv_file = document.uploaded_file
+            with open(uploaded_csv_file.path, 'r', encoding='utf-8') as file:
+                reader = csv.reader(file)
+                for row in reader:
+                    session_data.append(row[3])
+                    page_data.append(row[2])
+                    date_data.append(row[1])
+
+            document_data = ViewDocumentSerializer(document).data
+            return Response({'message': 'Document fetched', 'data': document_data,
+                             'csv_data': {
+                                 'date_data': date_data[1:50],
+                                 'page_data': page_data[1:50],
+                                 'session_data': session_data[1:50]
+                             }}, status=status.HTTP_200_OK)
+        except Exception as err:
+            print(err)
+            return Response({'message': 'Failed to fetch user document'}, status=status.HTTP_400_BAD_REQUEST)

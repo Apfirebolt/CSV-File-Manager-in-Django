@@ -3,7 +3,7 @@ from django.conf.urls.static import static
 from csv_manager import settings
 from . views import CreateUserView, DeleteAccountView, DetailUserView, LogoutView, login_user
 from documents.views import ( UploadNewFile, DeleteUploadedFile, DetailUploadedFile,
-    ListUploadedFiles, UpdateUploadedFile, )
+                            ListUploadedFiles, UpdateUploadedFile, GetAllDocumentsAPI, GetDocumentDetail, )
 
 
 urlpatterns = [
@@ -17,6 +17,9 @@ urlpatterns = [
     path('file_update/<int:id>', UpdateUploadedFile.as_view(), name='update_file'),
     path('file_detail/<int:id>', DetailUploadedFile.as_view(), name='detail_file'),
     path('file_delete/<int:id>', DeleteUploadedFile.as_view(), name='delete_file'),
+    # API Urls start from here
+    path('api/documents', GetAllDocumentsAPI.as_view(), name='all_documents_api'),
+    path('api/<int:pk>', GetDocumentDetail.as_view(), name='document_detail'),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
