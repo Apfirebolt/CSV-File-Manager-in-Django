@@ -2,9 +2,10 @@ from django.views.generic import FormView, ListView, UpdateView, DeleteView, Det
 from . forms import CSVFileUploadForm
 from . models import UploadedFile
 from rest_framework.views import APIView
+from rest_framework.generics import ListAPIView, CreateAPIView, RetrieveAPIView, DestroyAPIView, UpdateAPIView
 from rest_framework.response import Response
 from rest_framework import status
-from . serializers import ViewDocumentSerializer
+from . serializers import ViewDocumentSerializer, UploadedFileSerializer
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.contrib import messages
 from django.http import HttpResponseRedirect
@@ -156,3 +157,33 @@ class GetDocumentDetail(APIView):
         except Exception as err:
             print(err)
             return Response({'message': 'Failed to fetch user document'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class UploadFileAPIView(CreateAPIView):
+    """ API for uploading CSV document """
+    serializer_class = UploadedFileSerializer
+    permission_classes = []
+
+    def create(self, request, *args, **kwargs):
+        try:
+            serializer = self.get_serializer(data=request.data)
+            serializer.is_valid(raise_exception=True)
+            validatedData = serializer.validated_data
+            instance = self.perform_create(serializer)
+            return Response(
+                {'message': 'You have been successfully uploaded file.', 'success': True, 'data': serializer.data},
+                status=status.HTTP_201_CREATED)
+        except Exception as err:
+            print(err)
+            return Response({'message': 'Failed to upload file, some error occurred!', 'success': False},
+                            status=status.HTTP_400_BAD_REQUEST)
+
+
+class DeleteFileAPIView(DestroyAPIView):
+    """ API for deleting CSV document """
+    pass
+
+
+class UpdateFileAPIView(UpdateAPIView):
+    """ API for updating an uploaded file """
+    pass

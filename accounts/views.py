@@ -8,6 +8,15 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import reverse
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.mixins import LoginRequiredMixin
+from rest_framework.generics import CreateAPIView, ListAPIView, RetrieveAPIView
+from . serializers import RegisterSerializer, UserSerializer
+from rest_framework.response import Response
+from rest_framework import status
+from rest_framework.views import APIView
+from rest_framework.authtoken.models import Token
+from rest_framework.authtoken.views import ObtainAuthToken
+from django.dispatch import receiver
+from django.db.models.signals import post_save
 
 
 class CreateUserView(FormView):
@@ -68,3 +77,61 @@ class DetailUserView(LoginRequiredMixin, DetailView):
 
 class DeleteAccountView(DeleteView):
     pass
+
+
+class RegisterUserApiView(CreateAPIView):
+    """ API View for user Registration """
+
+    serializer_class = RegisterSerializer
+    permission_classes = []
+
+    def create(self, request, *args, **kwargs):
+       try:
+           serializer = self.get_serializer(data=request.data)
+           serializer.is_valid(raise_exception=True)
+           validatedData = serializer.validated_data
+           instance = self.perform_create(serializer)
+           return Response(
+               {'message': 'You have been successfully registered', 'success': True, 'data': serializer.data},
+               status=status.HTTP_201_CREATED)
+       except Exception as err:
+           print(err)
+           return Response({'message': 'Failed to register, some error occurred!', 'success': False},
+               status=status.HTTP_400_BAD_REQUEST)
+
+    def perform_create(self, serializer):
+        # Update user password here
+        return serializer.save(password=make_password(serializer.validated_data['password']))
+
+
+@receiver(post_save, sender=CustomUser)
+def create_auth_token(sender, instance=None, created=False, **kwargs):
+    if created:
+        Token.objects.create(user=instance)
+
+
+class CustomObtainAuthToken(ObtainAuthToken):
+
+  def post(self, request, *args, **kwargs):
+    response = super(CustomObtainAuthToken, self).post(request, *args, **kwargs)
+    token = Token.objects.get(key=response.data['token'])
+    return Response({'token': token.key, 'id': token.user_id, }, status=status.HTTP_200_OK)
+
+
+class DashboardAPIView(RetrieveAPIView):
+    """ API Detail View for user data """
+
+    serializer_class = UserSerializer
+
+    def get_object(self):
+        return CustomUser.objects.get(id=self.request.user.id)
+
+
+class ListAllUsersApiView(ListAPIView):
+    serializer_class = UserSerializer
+    permission_classes = []
+    queryset = CustomUser.objects.all()
+
+
+
+

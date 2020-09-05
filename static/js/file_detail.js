@@ -95,7 +95,7 @@ function line_chart(res, start_index, end_index) {
 function call_api(start_index, end_index, total_pages) {
     let document_id = location.pathname.split('/')[3];
     $.ajax({
-        url: "http://83.136.219.54:8010/accounts/api/" + document_id,
+        url: "http://localhost:8000/accounts/api/" + document_id,
         type: 'GET',
         dataType: 'json',
         success: function(res) {
@@ -117,7 +117,7 @@ function call_api(start_index, end_index, total_pages) {
                 append_data += '<li class="page-item"><a class="page-link m-1" href="#" value="next">Next</a></li>';
             }
             $('.pagination').append(append_data);
-            $('.card-body')
+            $('.card-body').empty();
             $('.card-body').append(`<p class="text-primary">Data from indices 
 ${start_index} to ${end_index} is currently plotted in the charts, you can use pagination for navigation.</p>`)
             // Initialize radar chart

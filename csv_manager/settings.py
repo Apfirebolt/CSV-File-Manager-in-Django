@@ -37,6 +37,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'corsheaders',
+    'rest_framework.authtoken',
     'rest_framework',
     'django_cleanup',
     'accounts',
@@ -44,6 +46,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -125,6 +128,8 @@ DEFAULT_RENDERER_CLASSES = [
     'rest_framework.renderers.BrowsableAPIRenderer',
 ]
 
+CORS_ORIGIN_WHITELIST = ['http://localhost:8080', 'http://localhost:3000']
+
 AUTH_USER_MODEL = "accounts.CustomUser"
 
 LANGUAGE_CODE = 'en-us'
@@ -146,3 +151,5 @@ STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+SITE_URL = "http://127.0.0.1:8000"

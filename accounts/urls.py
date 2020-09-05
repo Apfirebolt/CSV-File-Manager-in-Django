@@ -1,9 +1,11 @@
 from django.urls import path
 from django.conf.urls.static import static
 from csv_manager import settings
-from . views import CreateUserView, DeleteAccountView, DetailUserView, LogoutView, login_user
+from . views import ( CreateUserView, DeleteAccountView, DetailUserView, LogoutView, login_user,
+                    RegisterUserApiView, CustomObtainAuthToken, ListAllUsersApiView, )
 from documents.views import ( UploadNewFile, DeleteUploadedFile, DetailUploadedFile,
-                            ListUploadedFiles, UpdateUploadedFile, GetAllDocumentsAPI, GetDocumentDetail, )
+                            ListUploadedFiles, UpdateUploadedFile, GetAllDocumentsAPI,
+                              GetDocumentDetail, UploadFileAPIView, UpdateFileAPIView, DeleteFileAPIView, )
 
 
 urlpatterns = [
@@ -18,7 +20,13 @@ urlpatterns = [
     path('file_detail/<int:id>', DetailUploadedFile.as_view(), name='detail_file'),
     path('file_delete/<int:id>', DeleteUploadedFile.as_view(), name='delete_file'),
     # API Urls start from here
+    path('api/register', RegisterUserApiView.as_view(), name='register_api'),
+    path('api/auth-token', CustomObtainAuthToken.as_view(), name='auth-token'),
+    path('api/users', ListAllUsersApiView.as_view(), name='users_api'),
     path('api/documents', GetAllDocumentsAPI.as_view(), name='all_documents_api'),
+    path('api/file_upload', UploadFileAPIView.as_view(), name='upload_file_api'),
+    path('api/delete_file/<int:id>', DeleteFileAPIView.as_view(), name='delete_file_api'),
+    path('api/update_file/<int:id>', UpdateFileAPIView.as_view(), name='update_file_api'),
     path('api/<int:pk>', GetDocumentDetail.as_view(), name='document_detail'),
 ]
 
