@@ -106,6 +106,7 @@ class RegisterUserApiView(CreateAPIView):
 
 @receiver(post_save, sender=CustomUser)
 def create_auth_token(sender, instance=None, created=False, **kwargs):
+    """ Tokens for users would be created as soon as they register through signals """
     if created:
         Token.objects.create(user=instance)
 
@@ -131,6 +132,7 @@ class ListAllUsersApiView(ListAPIView):
     serializer_class = UserSerializer
     permission_classes = []
     queryset = CustomUser.objects.all()
+
 
 
 

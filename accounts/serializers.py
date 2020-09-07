@@ -7,7 +7,7 @@ class UserSerializer(serializers.ModelSerializer):
 
   class Meta:
     model = CustomUser
-    fields = ('id', 'username', 'email')
+    fields = ('id', 'username', 'email', 'profile_image',)
 
 
 class RegisterSerializer(serializers.ModelSerializer):
@@ -45,12 +45,15 @@ class RegisterSerializer(serializers.ModelSerializer):
     return value
 
   def validate_profile_image(self, value):
-    if value.size > 1048576:
-      raise serializers.ValidationError(
-        self.error_messages['file_size_exceeded'],
-        code='file_size_exceeded'
-      )
-    return value
+    if value:
+      if value.size > 1048576:
+        raise serializers.ValidationError(
+          self.error_messages['file_size_exceeded'],
+          code='file_size_exceeded'
+        )
+      return value
+    else:
+      pass
 
 
 

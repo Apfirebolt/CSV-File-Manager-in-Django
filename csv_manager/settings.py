@@ -128,7 +128,7 @@ DEFAULT_RENDERER_CLASSES = [
     'rest_framework.renderers.BrowsableAPIRenderer',
 ]
 
-CORS_ORIGIN_WHITELIST = ['http://localhost:8080', 'http://localhost:3000']
+CORS_ORIGIN_WHITELIST = ['http://localhost:8080', 'http://localhost:3000', 'http://apgiiit.com',]
 
 AUTH_USER_MODEL = "accounts.CustomUser"
 

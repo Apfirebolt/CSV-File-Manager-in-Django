@@ -10,6 +10,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMix
 from django.contrib import messages
 from django.http import HttpResponseRedirect
 from django.shortcuts import reverse
+from rest_framework.permissions import IsAuthenticated
 import csv
 
 
@@ -122,7 +123,7 @@ class GetAllDocumentsAPI(APIView):
 
     def get(self, request):
         try:
-            all_user_documents = UploadedFile.objects.all()
+            all_user_documents = UploadedFile.objects.filter(uploaded_by_id=request.user.id)
             document_data = ViewDocumentSerializer(all_user_documents, many=True).data
             return Response({'message': 'All documents fetched', 'data': document_data}, status=status.HTTP_200_OK)
         except Exception as err:
@@ -162,7 +163,6 @@ class GetDocumentDetail(APIView):
 class UploadFileAPIView(CreateAPIView):
     """ API for uploading CSV document """
     serializer_class = UploadedFileSerializer
-    permission_classes = []
 
     def create(self, request, *args, **kwargs):
         try:
@@ -175,15 +175,92 @@ class UploadFileAPIView(CreateAPIView):
                 status=status.HTTP_201_CREATED)
         except Exception as err:
             print(err)
-            return Response({'message': 'Failed to upload file, some error occurred!', 'success': False},
+            return Response({'message': 'Failed to upload file, some error occurred!', 'errors': serializer.errors, 'success': False},
                             status=status.HTTP_400_BAD_REQUEST)
+
+    def perform_create(self, serializer):
+        # Update user password here
+        return serializer.save(uploaded_by=self.request.user)
 
 
 class DeleteFileAPIView(DestroyAPIView):
     """ API for deleting CSV document """
-    pass
+    serializer_class = UploadedFileSerializer
+    permission_classes = [IsAuthenticated]
+    queryset = UploadedFile.objects.all()
+
+    def get_object(self):
+        return UploadedFile.objects.get(id=self.kwargs['id'])
+
+    def preform_destroy(self, instance):
+        if instance.uploaded_by_id != self.request.user.id:
+            raise ValueError("Not authorized to delete this object.")
+        return instance.delete()
+
+
+class GetCSVDocumentView(APIView):
+    permission_classes = [IsAuthenticated,]
+
+    def get(self, request, id):
+        try:
+            csv_file_obj = UploadedFile.objects.get(id=id)
+            csv_data = []
+            with open(csv_file_obj.uploaded_file.path, 'r', encoding='utf-8') as file:
+                reader = csv.reader(file)
+                for row in reader:
+                    csv_data.append(row)
+            return Response(
+                {'message': 'Successfully fetched CSV data for this file.', 'success': True, 'data': csv_data},
+                status=status.HTTP_200_OK)
+        except Exception as err:
+            print(err)
+            return Response({'message': 'Failed to fetch csv data, some error occurred!', 'success': False},
+                            status=status.HTTP_400_BAD_REQUEST)
 
 
 class UpdateFileAPIView(UpdateAPIView):
     """ API for updating an uploaded file """
-    pass
+    serializer_class = UploadedFileSerializer
+    permission_classes = [IsAuthenticated,]
+    queryset = UploadedFile.objects.all()
+
+    def get_object(self):
+        uploaded_file_obj = UploadedFile.objects.get(id=self.kwargs['id'])
+        return uploaded_file_obj
+
+    def update(self, request, *args, **kwargs):
+        try:
+            partial = kwargs.pop('partial', False)
+            instance = self.get_object()
+            serializer = self.get_serializer(instance, data=request.data, partial=partial)
+            serializer.is_valid(raise_exception=True)
+            self.perform_update(serializer)
+
+            if getattr(instance, '_prefetched_objects_cache', None):
+                # If 'prefetch_related' has been applied to a queryset, we need to
+                # forcibly invalidate the prefetch cache on the instance.
+                instance._prefetched_objects_cache = {}
+
+            return Response(serializer.data)
+        except Exception as err:
+            print(err)
+            return Response({'message': 'Failed to update file, some error occurred!', 'errors': serializer.errors,
+                             'success': False},
+                            status=status.HTTP_400_BAD_REQUEST)
+
+    def perform_update(self, serializer):
+        serializer.save()
+
+    def partial_update(self, request, *args, **kwargs):
+        kwargs['partial'] = True
+        return self.update(request, *args, **kwargs)
+
+
+class GetDocumentDetailView(RetrieveAPIView):
+    serializer_class = ViewDocumentSerializer
+    permission_classes = [IsAuthenticated,]
+
+    def get_object(self):
+        return UploadedFile.objects.get(id=self.kwargs['id'])
+
+
