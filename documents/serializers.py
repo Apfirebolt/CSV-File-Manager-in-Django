@@ -3,11 +3,12 @@ from rest_framework.serializers import ValidationError
 from .models import UploadedFile
 import pandas as pd
 from pandas.api.types import is_numeric_dtype
+from django.core.validators import FileExtensionValidator
 
 
 class UploadedFileSerializer(serializers.ModelSerializer):
 
-  uploaded_file = serializers.FileField(required=False)
+  uploaded_file = serializers.FileField(required=False, validators=[FileExtensionValidator(['csv',])])
   file_description = serializers.CharField(max_length=300)
 
   class Meta:

@@ -101,7 +101,6 @@ function call_api(start_index, end_index, total_pages) {
         success: function(res) {
             // Set number of pages
             total_pages = Math.ceil(res.csv_data.page_data.length / 20);
-            console.log('Now total pages ', total_pages);
             // Empty existing pagination contents
             $(".pagination").empty();
             // Pagination
@@ -149,12 +148,10 @@ $(document).ready(function() {
             if(current_page > 1 && current_page <= total_pages) {
                 current_page -= 1;
             }
-            console.log('Current Page : ', current_page, total_pages);
         }
         // Set start and end indices and call the API when page number is changed.
         start_index = (current_page - 1) * 20;
         end_index = start_index + 20;
-        console.log('Start and end', start_index, end_index);
         call_api(start_index, end_index, total_pages);
     });
     call_api(start_index, end_index, total_pages);
